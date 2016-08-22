@@ -24,25 +24,6 @@ class Easemob
     }
 
     /*Token*/
-
-    public function createUser($username, $password, $nickname = '')
-    {
-        $url = $this->base_url . 'users';
-        $options = [
-            'username' => $username,
-            'password' => $password,
-            'nickname' => $nickname,
-        ];
-        $body = json_encode($options);
-        $header = array($this->getToken());
-        $result = $this->postCurl($url, $body, $header);
-        return $result;
-    }
-
-    /*
-	  授权注册
-	*/
-
     public function getToken()
     {
         if (Session::has('easemob_token')) {
@@ -63,8 +44,124 @@ class Easemob
         }
     }
 
-    /*添加好友*/
 
+    /*
+	  授权注册
+	*/
+    public function createUser($username, $password, $nickname = '')
+    {
+        $url = $this->base_url . 'users';
+        $options = [
+            'username' => $username,
+            'password' => $password,
+            'nickname' => $nickname,
+        ];
+        $body = json_encode($options);
+        $header = array($this->getToken());
+        $result = $this->postCurl($url, $body, $header);
+        return $result;
+    }
+
+
+    /*添加好友*/
+    public function addFriend($owner_username, $friend_username)
+    {
+        //$owner_username 是要添加好友的用户名，$friend_username 是被添加的用户名。
+        $url = $this->base_url . 'users/' . $owner_username . '/contacts/users/' . $friend_username;
+        $header = array($this->getToken(), 'Content-Type:application/json');
+        /*处理火狐浏览器不兼容的问题*/
+        if (is_array($header[0])) {
+            array_unshift($header[0], $header[1]);
+            $header = $header[0];
+        }
+        $result = $this->postCurl($url, '', $header);
+        return $result;
+    }
+
+    /*解除好友关系*/
+    public function deleteFriend($owner_username, $friend_username)
+    {
+        //$owner_username 是要添加好友的用户名，$friend_username 是被添加的用户名。
+        $url = $this->base_url . 'users/' . $owner_username . '/contacts/users/' . $friend_username;
+        $header = array($this->getToken());
+        $result = $this->postCurl($url, '', $header, 'DELETE');
+        return $result;
+    }
+
+    /*查看好友*/
+    public function showFriends($username)
+    {
+        $url = $this->base_url . 'users/' . $username . '/contacts/users';
+        $header = array($this->getToken());
+        $result = $this->postCurl($url, '', $header, 'GET');
+        return $result;
+    }
+
+    /*查看在线情况*/
+    public function isOnline($username)
+    {
+        $url = $this->base_url . 'users/' . $username . '/status';
+        $header = array($this->getToken(), 'Content-Type:application/json');
+        $result = $this->postCurl($url, '', $header, 'GET');
+        return $result;
+    }
+
+
+    /*查看用户离线消息数*/
+
+    public function getOfflineMessages($username)
+    {
+        $url = $this->base_url . 'users/' . $username . '/offline_msg_count';
+        $header = array($this->getToken());
+        $result = $this->postCurl($url, '', $header, 'GET');
+        return $result;
+    }
+
+    /*
+	查看某条消息的离线状态
+	----deliverd 表示此用户的该条离线消息已经收到
+    */
+    
+    public function getOfflineMessageStatus($username, $msg_id)
+    {
+        $url = $this->base_url . 'users/' . $username . '/offline_msg_count/' . $msg_id;
+        $header = array($this->getToken(), 'Content-Type:application/json');
+        $result = $this->postCurl($url, '', $header, 'GET');
+        return $result;
+    }
+
+//--------------------------------------------------------发送消息
+    /*
+        发送文本消息
+    */
+
+    public function getChatRecord()
+    {
+        $url = $this->base_url . 'chatmessages';
+        $header = array($this->getToken(), 'Content-Type:application/json');
+        $result = $this->postCurl($url, '', $header, 'GET');
+        return $result;
+    }
+
+
+//--------------------------------------------------------postCurl
+
+    public function sendText($from, $target_type, $target, $content)
+    {
+        $url = $this->base_url . 'messages';
+        $body['target_type'] = $target_type;
+        $body['target'] = $target;
+        $options['type'] = "txt";
+        $options['msg'] = $content;
+        $body['msg'] = $options;
+        $body['from'] = $from;
+        $b = json_encode($body);
+        $header = array($this->getToken(), 'Content-Type:application/json');
+        $result = $this->postCurl($url, $b, $header);
+        return $result;
+    }
+
+    /*Post CURL*/
     function postCurl($url, $body, $header, $type = "POST")
     {
         //1.创建一个curl资源
@@ -130,105 +227,6 @@ class Easemob
             return $res;
         else
             return $result;
-    }
-
-    /*解除好友关系*/
-
-    public function addFriend($owner_username, $friend_username)
-    {
-        //$owner_username 是要添加好友的用户名，$friend_username 是被添加的用户名。
-        $url = $this->base_url . 'users/' . $owner_username . '/contacts/users/' . $friend_username;
-        $header = array($this->getToken(), 'Content-Type:application/json');
-        /*处理火狐浏览器不兼容的问题*/
-        if (is_array($header[0])) {
-            array_unshift($header[0], $header[1]);
-            $header = $header[0];
-        }
-        $result = $this->postCurl($url, '', $header);
-        return $result;
-    }
-
-    /*查看好友*/
-
-    public function deleteFriend($owner_username, $friend_username)
-    {
-        //$owner_username 是要添加好友的用户名，$friend_username 是被添加的用户名。
-        $url = $this->base_url . 'users/' . $owner_username . '/contacts/users/' . $friend_username;
-        $header = array($this->getToken());
-        $result = $this->postCurl($url, '', $header, 'DELETE');
-        return $result;
-    }
-
-    /*查看在线情况*/
-
-    public function showFriends($username)
-    {
-        $url = $this->base_url . 'users/' . $username . '/contacts/users';
-        $header = array($this->getToken());
-        $result = $this->postCurl($url, '', $header, 'GET');
-        return $result;
-    }
-
-    /*查看用户离线消息数*/
-
-    public function isOnline($username)
-    {
-        $url = $this->base_url . 'users/' . $username . '/status';
-        $header = array($this->getToken(), 'Content-Type:application/json');
-        $result = $this->postCurl($url, '', $header, 'GET');
-        return $result;
-    }
-
-    /*
-	查看某条消息的离线状态
-	----deliverd 表示此用户的该条离线消息已经收到
-    */
-
-    public function getOfflineMessages($username)
-    {
-        $url = $this->base_url . 'users/' . $username . '/offline_msg_count';
-        $header = array($this->getToken());
-        $result = $this->postCurl($url, '', $header, 'GET');
-        return $result;
-    }
-
-    public function getOfflineMessageStatus($username, $msg_id)
-    {
-        $url = $this->base_url . 'users/' . $username . '/offline_msg_count/' . $msg_id;
-        $header = array($this->getToken(), 'Content-Type:application/json');
-        $result = $this->postCurl($url, '', $header, 'GET');
-        return $result;
-    }
-
-//--------------------------------------------------------发送消息
-    /*
-        发送文本消息
-    */
-
-    public function getChatRecord()
-    {
-        $url = $this->base_url . 'chatmessages';
-        $header = array($this->getToken(), 'Content-Type:application/json');
-        $result = $this->postCurl($url, '', $header, 'GET');
-        return $result;
-    }
-
-
-//--------------------------------------------------------postCurl
-
-    public function sendText($from, $target_type, $target, $content)
-    {
-        $url = $this->base_url . 'messages';
-        $body['target_type'] = $target_type;
-        $body['target'] = $target;
-        $options['type'] = "txt";
-        $options['msg'] = $content;
-        $body['msg'] = $options;
-        $body['from'] = $from;
-        $b = json_encode($body);
-        $header = array($this->getToken(), 'Content-Type:application/json');
-        $result = $this->postCurl($url, $b, $header);
-        return $result;
     }
 
 }
