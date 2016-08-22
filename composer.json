@@ -1,0 +1,23 @@
+{
+  "name": "zhangxiaoshuai/easemob",
+  "description": "",
+  "authors": [
+    {
+      "name": "Zhangxiaoshuai",
+      "email": "1115656547@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "illuminate/support": "4.2.*"
+  },
+  "autoload": {
+    "classmap": [
+      "src/migrations"
+    ],
+    "psr-0": {
+      "Zhangxiaoshuai\\Easemob\\": "src/"
+    }
+  },
+  "minimum-stability": "stable"
+}
