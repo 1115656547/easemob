@@ -132,20 +132,8 @@ class Easemob
 
 //--------------------------------------------------------发送消息
     /*
-        发送文本消息
+      *  发送文本消息
     */
-
-    public function getChatRecord()
-    {
-        $url = $this->base_url . 'chatmessages';
-        $header = array($this->getToken(), 'Content-Type:application/json');
-        $result = $this->postCurl($url, '', $header, 'GET');
-        return $result;
-    }
-
-
-//--------------------------------------------------------postCurl
-
     public function sendText($from, $target_type, $target, $content)
     {
         $url = $this->base_url . 'messages';
@@ -160,6 +148,20 @@ class Easemob
         $result = $this->postCurl($url, $b, $header);
         return $result;
     }
+
+    /*
+     * 聊天记录
+     * */
+    public function getChatRecord()
+    {
+        $url = $this->base_url . 'chatmessages';
+        $header = array($this->getToken(), 'Content-Type:application/json');
+        $result = $this->postCurl($url, '', $header, 'GET');
+        return $result;
+    }
+
+
+//--------------------------------------------------------postCurl
 
     /*Post CURL*/
     function postCurl($url, $body, $header, $type = "POST")
