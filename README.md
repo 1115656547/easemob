@@ -14,10 +14,10 @@
 5) 发布配置文件
 
     $ php artisan config:publish Zhangxiaoshuai/Easemob
-7) 配置Config
+6) 配置Config
 
     在项目app/config/packages你会找到一个zhangxiaoshuai/easemob/config.php,然后设置里面的参数
-6) 注册包
+7) 注册包
 
     在项目的app/config/app.php下的providers方法添加
     'providers' => array(
@@ -28,9 +28,6 @@
         // ...
         'Easemob' =>'Zhangxiaoshuai\Easemob\Facade\Easemob'
     )
-7) 配置Config
-
-    在项目app/config/packages你会找到一个zhangxiaoshuai/easemob/config，然后进行配置参数
 8）Usage
 
     // 授权单个注册
