@@ -11,6 +11,7 @@
 4) 在项目下执行
 
    $ composer update
+   
 5) 发布配置文件
 
     $ php artisan config:publish Zhangxiaoshuai/Easemob
