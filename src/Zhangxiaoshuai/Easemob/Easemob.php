@@ -8,6 +8,7 @@
 namespace Zhangxiaoshuai\Easemob;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Session;
 
 class Easemob
 {
