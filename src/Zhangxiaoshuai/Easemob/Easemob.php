@@ -27,10 +27,7 @@ class Easemob
     /*Token*/
     public function getToken()
     {
-        if (Session::has('easemob_token')) {
-            $easemob_token = Session::get('easemob_token');
-            return $easemob_token;
-        } else {
+        
             $url = $this->base_url . 'token';
             $options = [
                 'grant_type' => 'client_credentials',
@@ -42,7 +39,7 @@ class Easemob
             $result = "Authorization:Bearer " . $tokenResult["access_token"];
             Session::push('easemob_token', $result);
             return $result;
-        }
+
     }
 
 
